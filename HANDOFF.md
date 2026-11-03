@@ -80,8 +80,8 @@ Rebuild everything with `cd ~/juiced && .venv/bin/python scripts/build.py`. It t
 
 ## Live (Nov 2, 2026)
 
-- Demo: https://juiced-sooty.vercel.app (Vercel project `juiced` under aaron-montano, team aaron-1ad8). Deployed from `site/` with `cd site && vercel deploy --prod --yes`. `site/.vercel` and `site/.env.local` are git-ignored, and the live site 404s on both (checked).
-- Wanted `juiced-demo.vercel.app` like the other demos, but auto mode blocked `vercel domains add`. Aaron can run `! cd ~/juiced/site && vercel domains add juiced-demo.vercel.app juiced`, then update the link on his site.
+- Demo: https://juiced-demo.vercel.app (juiced-sooty.vercel.app also works) (Vercel project `juiced` under aaron-montano, team aaron-1ad8). Deployed from `site/` with `cd site && vercel deploy --prod --yes`. `site/.vercel` and `site/.env.local` are git-ignored, and the live site 404s on both (checked).
+- Aaron added `juiced-demo.vercel.app` himself (auto mode blocks `vercel domains add`). The website card points at it (commit 981b4eb).
 - On his website (aaronmontano.vercel.app) as card 5, commit 9c05051 in personal-site. The repo went public Nov 2, and the card links it (commit b568e4b).
 
 ## Next steps

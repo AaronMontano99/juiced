@@ -4,6 +4,8 @@ A SQL investigation of baseball's steroid era. I took every MLB batting line sin
 
 Kind of. Just not where everybody looks.
 
+**Live: [juiced-demo.vercel.app](https://juiced-demo.vercel.app)**
+
 The site has a chart and the real SQL for each case, plus a live DuckDB console that runs the same files in your browser.
 
 ## What the data says
