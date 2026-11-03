@@ -19,3 +19,11 @@ INSERT INTO raw.ped_events
 SELECT player_id, name, event_type, CAST(event_date AS DATE), tier,
        NULLIF(substance, ''), detail, source
 FROM read_csv('data/seed/ped_events.csv', header = true, all_varchar = true);
+
+INSERT INTO raw.policy_events
+SELECT CAST(event_date AS DATE), date_precision, kind, event, quote, source, NULLIF(note, '')
+FROM read_csv('data/seed/policy_events.psv', delim = '|', header = true, all_varchar = true);
+
+INSERT INTO raw.food_supply
+SELECT entity, year, food, kg_per_capita
+FROM read_csv('data/food/food_supply.csv', header = true);

@@ -29,3 +29,16 @@ WHERE l.year_id IS NULL OR l.hr_per_pa NOT BETWEEN 0.001 AND 0.05;
 -- check: ages are plausible for anyone with real playing time
 SELECT 'implausible_age', player_id || ' ' || year_id
 FROM core.player_season WHERE pa >= 100 AND (age < 15 OR age > 50);
+
+-- check: every timeline row has a quote and a Wikipedia source
+SELECT 'policy_event_unsourced', event
+FROM raw.policy_events WHERE length(quote) < 15 OR source NOT LIKE 'https://en.wikipedia.org/wiki/%';
+
+-- check: food data is complete for both regions, all seven foods, every year 1961-2023
+SELECT 'food_gap', e.ent || ' ' || d.fd || ' ' || g.y
+FROM (SELECT DISTINCT entity AS ent FROM raw.food_supply) e
+CROSS JOIN (SELECT DISTINCT food AS fd FROM raw.food_supply) d
+CROSS JOIN generate_series(1961, 2023) g(y)
+WHERE NOT EXISTS (SELECT 1 FROM raw.food_supply f WHERE f.entity = e.ent AND f.food = d.fd AND f.year = g.y)
+UNION ALL
+SELECT 'food_count', COUNT(DISTINCT food)::VARCHAR FROM raw.food_supply HAVING COUNT(DISTINCT food) <> 7;

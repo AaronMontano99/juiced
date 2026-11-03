@@ -18,6 +18,8 @@ The site has a chart and the real SQL for each case, plus a live DuckDB console 
 | 06 | The 73 question | Against his league, Ruth 1920 has an HR+ of 1,318. Bonds 2001 is 377, Maris 1961 is 351. Judge 2022 (313) beats every Sosa 60-homer season. |
 | 07 | Late bloomers | Caminiti (admitted) is #1 for power gained after 33, but Hank Aaron and Willie Mays are top 10 too. |
 | 08 | Six degrees of Canseco | Recursive-CTE BFS over the teammate graph: 99.7% of 1990s regulars are within 2 hops. Documented players were direct teammates 20.8% vs 15.1%. On n=48, that's noise. |
+| 09 | The testing timeline | 17 sourced drug-policy milestones (1991 memo → 2012 HGH blood tests), each stored with a verbatim quote. The share of home runs hit by later-linked players peaked at 15.6% in 1998 and was already falling before testing began in 2003. The league HR rate barely moved around testing (2.87 → 2.82 per 100 PA). |
+| 10 | Got milk? (bonus) | US milk per person "correlates" with the juice index at r = 0.59. Most of it is a seam: FAO changed its food-balance method in 2010. Old-method years only: 0.15. Year-over-year changes: nothing above 0.27 for any of 7 foods, US or World. Milk from 5 years earlier "predicts" juice best of all. A trend isn't a cause. |
 
 **HR+** is the yardstick everywhere: a player's HR per PA divided by the league's that season, × 100. It cancels out the ball, parks and expansion.
 
@@ -28,6 +30,7 @@ Needs Python 3.11+.
 ```sh
 python3 -m venv .venv
 .venv/bin/pip install duckdb
+python3 -I scripts/fetch_food.py      # optional: re-download the food data (already committed)
 .venv/bin/python scripts/build.py      # builds juiced.duckdb, runs checks + all 8 analyses, publishes site/
 cd site && python3 -m http.server 8000 # open http://localhost:8000
 ```
@@ -38,7 +41,8 @@ The build fails if any data-quality check in `sql/03_checks.sql` returns rows. C
 
 ```
 data/lahman/        SABR Lahman 2025 CSVs (People, Batting, Teams)
-data/seed/          the hand-built PED table (see data/seed/README.md)
+data/seed/          the hand-built PED table and drug-policy timeline (see data/seed/README.md)
+data/food/          per-capita food supply, World + US, 7 foods, 1961-2023
 sql/00_schema.sql   raw tables, typed, with keys
 sql/01_load.sql     CSV → raw
 sql/02_model.sql    core.player_season, core.league_season, HR+
@@ -70,6 +74,8 @@ Every row keeps its source. Details in [data/seed/README.md](data/seed/README.md
 
 - [SABR Lahman Baseball Database](https://sabr.org/lahman-database/), 2025 release, CC BY-SA 3.0
 - Wikipedia: [List of MLB players suspended for PEDs](https://en.wikipedia.org/wiki/List_of_Major_League_Baseball_players_suspended_for_performance-enhancing_drugs), [players named in the Mitchell Report](https://en.wikipedia.org/wiki/List_of_Major_League_Baseball_players_named_in_the_Mitchell_Report)
+- Wikipedia: [Doping in baseball](https://en.wikipedia.org/wiki/Doping_in_baseball), [MLB drug policy](https://en.wikipedia.org/wiki/Major_League_Baseball_drug_policy), [Biogenesis scandal](https://en.wikipedia.org/wiki/Biogenesis_scandal), for the testing timeline (`data/seed/policy_events.psv`)
+- FAO Food Balances via [Our World in Data](https://ourworldindata.org/diet-compositions), CC BY 4.0, for case 10 (`data/food/food_supply.csv`)
 - FanGraphs aging-curve work (Jeff Zimmerman and others), for comparing case 03's direction
 
 Built by Aaron Montano.

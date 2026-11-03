@@ -6,7 +6,8 @@
   const DATA = {};
   const FILES = ["league_trend", "change_points", "ball_or_juice", "hr_distribution", "aging_curves",
     "aging_summary", "model_outliers", "unmasking", "unmasking_null", "unmasking_top", "big_seasons",
-    "late_bloomers", "late_bloomers_by_era", "canseco_degrees", "canseco_teammates_documented"];
+    "late_bloomers", "late_bloomers_by_era", "canseco_degrees", "canseco_teammates_documented",
+    "juice_index", "policy_timeline", "food_juice", "food_correlation", "milk_lag"];
   const TIER_LABEL = { confirmed: "confirmed", named: "named", stimulant: "stimulant only", none: "no documented link" };
   const tierOf = (t) => (t && t !== "none" ? t : "none");
 
@@ -494,6 +495,201 @@
     });
   };
 
+  // ---------- Case 09: testing timeline ----------
+  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function eventDate(e) {
+    const [y, mo, dd] = e.event_date.split("-").map(Number);
+    if (e.date_precision === "day") return `${MON[mo - 1]} ${dd}, ${y}`;
+    if (e.date_precision === "month") return `${MON[mo - 1]} ${y}`;
+    if (e.date_precision === "season") return mo <= 3 ? `Spring ${y}` : `${y} season`;
+    return String(y);
+  }
+  const eventGroups = () => {
+    const g = new Map();
+    DATA.policy_timeline.forEach((e) => { if (!g.has(e.year_id)) g.set(e.year_id, []); g.get(e.year_id).push(e); });
+    return [...g.entries()].map(([year, evs], i) => ({ year, evs, n: i + 1 }));
+  };
+
+  charts["juice-timeline"] = (fig) => {
+    const d = DATA.juice_index, groups = eventGroups();
+    const chart = shell(fig, {
+      title: "The juice index: share of all home runs hit by later-linked players, 1985–2025",
+      sub: "Numbered markers are drug-policy milestones. Hover one, or find it in the list below.",
+      legend: [["line", "Juice index", "background:var(--s2)"], ["", "Policy milestone", "background:var(--surface);border:2px solid var(--text-2);border-radius:50%"]],
+      table: { cols: [{ label: "Year", key: "year_id" }, { label: "Juice index %", key: "juice_share", n: 1 }, { label: "Linked HR", key: "linked_hr", n: 1 }, { label: "League HR", key: "league_hr", n: 1 }, { label: "HR / 100 PA", key: "hr_per_100_pa", n: 1 }], rows: d.slice().reverse() },
+      note: "Linked = confirmed or named in the PED table. Stimulant-only cases left out.",
+    });
+    const narrow = chart.clientWidth < 560;
+    const F = frame(chart, { height: narrow ? 300 : 340, m: { t: 44, r: 16, b: 30, l: 40 }, x: [1984.5, 2025.5], y: [0, 18],
+      xTicks: narrow ? [1990, 2005, 2020] : [1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025], yTicks: [0, 5, 10, 15], yFmt: (v) => v + "%" });
+    const { svg, X, Y, m, H } = F;
+    groups.forEach((g) => s("line", { class: "cross", x1: X(g.year), x2: X(g.year), y1: 26, y2: H - m.b, "stroke-dasharray": "2 3" }, svg));
+    s("path", { class: "ln c2", d: pathOf(d.map((r) => [X(r.year_id), Y(r.juice_share)])) }, svg);
+    const peak = d.reduce((a, b) => (b.juice_share > a.juice_share ? b : a));
+    s("circle", { cx: X(peak.year_id), cy: Y(peak.juice_share), r: 4.5, class: "f2 ring" }, svg);
+    s("text", { class: "lbl", x: X(peak.year_id) + 8, y: Y(peak.juice_share) - 8 }, svg).textContent = `${peak.year_id}: ${fmt(peak.juice_share, 1)}%`;
+    const by = new Map(d.map((r) => [r.year_id, r]));
+    crosshair(F, d.map((r) => r.year_id), [
+      { label: "Juice index", color: "var(--s2)", get: (x) => by.get(x)?.juice_share, fmt: (v) => fmt(v, 1) + "%" },
+      { label: "HR / 100 PA", color: "var(--text-3)", get: () => null, fmt: (v) => v },
+    ], (x) => `${x} · ${fmt(by.get(x)?.hr_per_100_pa, 2)} HR per 100 PA`);
+    groups.forEach((g) => {
+      const cx = X(g.year);
+      s("circle", { cx, cy: 18, r: narrow ? 7 : 9, class: "hollow" }, svg);
+      s("text", { class: "tick", x: cx, y: 22, "text-anchor": "middle", style: `font-size:${narrow ? 9 : 11}px;font-weight:600;fill:var(--text)` }, svg).textContent = g.n;
+      const hit = s("circle", { cx, cy: 18, r: 13, class: "hit" }, svg);
+      hit.style.cursor = "pointer";
+      hit.addEventListener("mousemove", (ev) => showTip(`<b>${g.year}</b>` + g.evs.map((e) => `<div style="margin-top:4px">${esc(eventDate(e))}: ${esc(e.event)}</div>`).join(""), ev.clientX, ev.clientY));
+      hit.addEventListener("mouseleave", hideTip);
+      hit.addEventListener("click", () => document.getElementById(`ev-${g.n}`)?.scrollIntoView({ behavior: "smooth", block: "center" }));
+    });
+  };
+
+  function timeline() {
+    const el = $("#timeline"); if (!el) return;
+    el.innerHTML = eventGroups().map((g) => g.evs.map((e, i) => {
+      const host = e.source.replace("https://en.wikipedia.org/wiki/", "").replace(/_/g, " ");
+      const moved = e.hr100_before != null && e.hr100_after != null
+        ? `<span class="tl-stat">League HR per 100 PA: ${fmt(e.hr100_before, 2)} → ${fmt(e.hr100_after, 2)} · juice ${fmt(e.juice_before, 1)}% → ${fmt(e.juice_after, 1)}%</span>` : "";
+      return `<li ${i === 0 ? `id="ev-${g.n}"` : ""}><span class="tl-n">${i === 0 ? g.n : ""}</span><div>
+        <div class="tl-date">${esc(eventDate(e))} · ${esc(e.kind)}</div>
+        <div class="tl-event">${esc(e.event)}</div>
+        <div class="tl-quote">"${esc(e.quote)}" · <a href="${esc(e.source)}" target="_blank" rel="noopener">${esc(host)}</a></div>
+        ${e.note ? `<div class="tl-note">${esc(e.note)}</div>` : ""}${moved}</div></li>`;
+    }).join("")).join("");
+  }
+
+  // ---------- Case 10: got milk ----------
+  const FOODS = ["milk", "beef", "chicken", "pork", "lamb", "eggs", "fish"];
+  const milk = { entity: "United States", food: "milk" };
+  const regionName = (e) => (e === "United States" ? "US" : "World");
+  function rerenderMilk() { ["got-milk", "food-corr"].forEach(render); }
+  function controls(fig, withFood) {
+    const c = h("div", { class: "seg-row" });
+    const seg = (items, cur, set) => {
+      const g = h("div", { class: "seg", role: "group" });
+      items.forEach(([v, label]) => {
+        const b = h("button", { type: "button", "aria-pressed": String(v === cur) }, label);
+        b.onclick = () => { set(v); rerenderMilk(); };
+        g.appendChild(b);
+      });
+      return g;
+    };
+    c.appendChild(seg([["United States", "US"], ["World", "World"]], milk.entity, (v) => (milk.entity = v)));
+    if (withFood) c.appendChild(seg(FOODS.map((f) => [f, f[0].toUpperCase() + f.slice(1)]), milk.food, (v) => (milk.food = v)));
+    fig.insertBefore(c, fig.querySelector(".chart"));
+  }
+
+  charts["got-milk"] = (fig) => {
+    const juice = DATA.juice_index.filter((r) => r.year_id <= 2023);
+    const food = DATA.food_juice.filter((r) => r.entity === milk.entity && r.food === milk.food);
+    const corr = DATA.food_correlation.find((r) => r.entity === milk.entity && r.food === milk.food);
+    const fname = milk.food === "chicken" ? "chicken" : milk.food;
+    const chart = shell(fig, {
+      title: `How juiced baseball was vs ${regionName(milk.entity)} ${fname} per person`,
+      sub: `Two panels, two scales, one timeline. r = ${fmt(corr.r_levels, 2)} raw, ${fmt(corr.r_levels_pre2010, 2)} before FAO's 2010 method change, ${fmt(corr.r_changes, 2)} on year-over-year changes.`,
+      legend: [["line", "Juice index (% of HR)", "background:var(--s2)"], ["line", `${regionName(milk.entity)} ${fname}, kg per person`, "background:var(--s1)"]],
+      table: { cols: [{ label: "Year", key: "year_id" }, { label: "Juice index %", key: "juice_share", n: 1 }, { label: `${fname} kg / person`, key: "kg", n: 1 }], rows: food.slice().reverse() },
+      note: "1985–2023: from the first season with linked players to the last FAO year.",
+    });
+    controls(fig, true);
+    const narrow = chart.clientWidth < 560;
+    const W = Math.max(300, chart.clientWidth), m = { t: 22, r: 16, b: 30, l: 46 }, ph = narrow ? 130 : 150, gap = 44;
+    const H = m.t + ph + gap + ph + m.b;
+    const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, chart);
+    const X = lin(1984.5, 2023.5, m.l, W - m.r);
+    const kgs = food.map((r) => r.kg), lo = Math.min(...kgs), hi = Math.max(...kgs), pad = (hi - lo) * 0.15 || 1;
+    const step = niceStep((hi - lo + 2 * pad) / 3);
+    const y0 = Math.floor((lo - pad) / step) * step, y1 = Math.ceil((hi + pad) / step) * step;
+    const panels = [
+      { top: m.t, Y: lin(0, 18, m.t + ph, m.t), ticks: [0, 6, 12, 18], fmtv: (v) => v + "%", title: "Juice index" },
+      { top: m.t + ph + gap, Y: lin(y0, y1, m.t + ph + gap + ph, m.t + ph + gap), ticks: ticks(y0, y1, step), fmtv: (v) => fmt(v, step < 1 ? 1 : 0), title: `${regionName(milk.entity)} ${fname} (kg per person)` },
+    ];
+    panels.forEach((p) => {
+      p.ticks.forEach((v) => {
+        s("line", { class: "gridline", x1: m.l, x2: W - m.r, y1: p.Y(v), y2: p.Y(v) }, svg);
+        s("text", { class: "tick", x: m.l - 8, y: p.Y(v) + 4, "text-anchor": "end" }, svg).textContent = p.fmtv(v);
+      });
+      s("text", { class: "lbl-strong", x: m.l, y: p.top - 8 }, svg).textContent = p.title;
+    });
+    s("line", { class: "axisline", x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b }, svg);
+    (narrow ? [1990, 2005, 2020] : [1985, 1990, 1995, 2000, 2005, 2010, 2015, 2020]).forEach((v) =>
+      s("text", { class: "tick", x: X(v), y: H - m.b + 18, "text-anchor": "middle" }, svg).textContent = v);
+    s("path", { class: "ln c2", d: pathOf(juice.map((r) => [X(r.year_id), panels[0].Y(r.juice_share)])) }, svg);
+    // FAO's method change: the old and new food-balance series meet at 2010
+    s("line", { class: "cross", x1: X(2009.5), x2: X(2009.5), y1: panels[1].top, y2: H - m.b, "stroke-dasharray": "2 3" }, svg);
+    s("text", { class: "tick", x: X(2009.5) + 6, y: panels[1].top + 12 }, svg).textContent = "FAO changes its method";
+    s("path", { class: "ln c1", d: pathOf(food.map((r) => [X(r.year_id), panels[1].Y(r.kg)])) }, svg);
+    // shared crosshair across both panels
+    const jb = new Map(juice.map((r) => [r.year_id, r])), fb = new Map(food.map((r) => [r.year_id, r]));
+    const line = s("line", { class: "cross", y1: m.t, y2: H - m.b, visibility: "hidden" }, svg);
+    const d1 = s("circle", { r: 4.5, class: "ring", style: "fill:var(--s2)", visibility: "hidden" }, svg);
+    const d2 = s("circle", { r: 4.5, class: "ring", style: "fill:var(--s1)", visibility: "hidden" }, svg);
+    const hit = s("rect", { class: "hit", x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b }, svg);
+    const move = (ev) => {
+      const pt = ev.touches ? ev.touches[0] : ev, r = svg.getBoundingClientRect();
+      const yr = Math.max(1985, Math.min(2023, Math.round(X.inv(((pt.clientX - r.left) / r.width) * W))));
+      const a = jb.get(yr), b = fb.get(yr); if (!a || !b) return;
+      [line].forEach((n) => { n.setAttribute("x1", X(yr)); n.setAttribute("x2", X(yr)); n.setAttribute("visibility", "visible"); });
+      d1.setAttribute("cx", X(yr)); d1.setAttribute("cy", panels[0].Y(a.juice_share)); d1.setAttribute("visibility", "visible");
+      d2.setAttribute("cx", X(yr)); d2.setAttribute("cy", panels[1].Y(b.kg)); d2.setAttribute("visibility", "visible");
+      showTip(`<b>${yr}</b>` + row("Juice index", fmt(a.juice_share, 1) + "%", "var(--s2)") + row(`${fname} kg`, fmt(b.kg, 1), "var(--s1)"), pt.clientX, pt.clientY);
+    };
+    const leave = () => { [line, d1, d2].forEach((n) => n.setAttribute("visibility", "hidden")); hideTip(); };
+    hit.addEventListener("mousemove", move); hit.addEventListener("touchmove", move, { passive: true });
+    hit.addEventListener("mouseleave", leave); hit.addEventListener("touchend", leave);
+  };
+  function niceStep(raw) { const p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; }
+
+  charts["food-corr"] = (fig) => {
+    const d = DATA.food_correlation.filter((r) => r.entity === milk.entity).sort((a, b) => Math.abs(b.r_levels) - Math.abs(a.r_levels));
+    const chart = shell(fig, {
+      title: `Every food vs the juice index · ${regionName(milk.entity)}`,
+      sub: "Filled: raw correlation. Hollow: after removing the trend. Watch them slide to zero.",
+      legend: [["", "raw (levels)", "background:var(--s1);border-radius:50%"], ["", "year-over-year changes", "background:var(--surface);border:2px solid var(--text-3);border-radius:50%"]],
+      table: { cols: [{ label: "Region", key: "entity" }, { label: "Food", key: "food" }, { label: "r (raw)", key: "r_levels", n: 1 }, { label: "r (changes)", key: "r_changes", n: 1 }, { label: "r (1985–2009)", key: "r_levels_pre2010", n: 1 }, { label: "R²", key: "r2_levels", n: 1 }, { label: "kg per juice point", key: "kg_per_juice_point", n: 1 }], rows: DATA.food_correlation },
+    });
+    controls(fig, false);
+    const m = { t: 8, r: 20, b: 30, l: 74 }, rowH = 32, H = m.t + m.b + rowH * d.length;
+    const F = frame(chart, { height: H, m, x: [-1, 1], y: [0, 1], xTicks: [-1, -0.5, 0, 0.5, 1], xFmt: (v) => (v > 0 ? "+" : "") + v });
+    const { svg, X, W } = F;
+    [-1, -0.5, 0.5, 1].forEach((v) => s("line", { class: "gridline", x1: X(v), x2: X(v), y1: m.t, y2: H - m.b }, svg));
+    s("line", { class: "axisline", x1: X(0), x2: X(0), y1: m.t, y2: H - m.b }, svg);
+    d.forEach((r, i) => {
+      const cy = m.t + rowH * i + rowH / 2;
+      s("text", { class: "lbl-strong", x: m.l - 12, y: cy + 4, "text-anchor": "end" }, svg).textContent = r.food[0].toUpperCase() + r.food.slice(1);
+      s("line", { class: "connector", x1: X(r.r_levels), x2: X(r.r_changes), y1: cy, y2: cy }, svg);
+      s("circle", { cx: X(r.r_changes), cy, r: 5, class: "hollow" }, svg);
+      s("circle", { cx: X(r.r_levels), cy, r: 6, class: "f1 ring" }, svg);
+      const hit = s("rect", { class: "hit", x: 0, y: cy - rowH / 2, width: W, height: rowH }, svg);
+      hit.addEventListener("mousemove", (ev) => showTip(`<b>${esc(r.food)} · ${regionName(r.entity)}</b>` + row("r, raw", fmt(r.r_levels, 3), "var(--s1)") + row("r, changes", fmt(r.r_changes, 3)) + row("r, 1985–2009", fmt(r.r_levels_pre2010, 3)) + row("kg per juice point", fmt(r.kg_per_juice_point, 2)) + row("Range", `${r.kg_min}–${r.kg_max} kg`), ev.clientX, ev.clientY));
+      hit.addEventListener("mouseleave", hideTip);
+    });
+  };
+
+  charts["milk-lag"] = (fig) => {
+    const d = DATA.milk_lag;
+    const chart = shell(fig, {
+      title: "Did the milk cause the juice?",
+      sub: "US milk slid earlier (−) or later (+) against the juice index, then re-correlated",
+      table: { cols: [{ label: "Milk shifted (years)", key: "lag_years", n: 1 }, { label: "r", key: "r", n: 1 }, { label: "Seasons", key: "seasons", n: 1 }], rows: d },
+      note: "A real cause peaks at one sensible lag. This just keeps climbing toward the edge.",
+    });
+    const F = frame(chart, { height: 300, m: { t: 22, r: 8, b: 34, l: 36 }, x: [-5.5, 5.5], y: [0, 0.8], yTicks: [0, 0.2, 0.4, 0.6, 0.8], xTicks: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], xFmt: (v) => (v > 0 ? "+" : "") + v });
+    const { svg, X, Y, m, H } = F;
+    const bw = X(1) - X(0) - 4;
+    d.forEach((r) => {
+      const x0 = X(r.lag_years) - bw / 2, y0 = Y(r.r), rr = Math.min(4, bw / 2);
+      s("path", { class: r.lag_years === -5 ? "f-deep" : "f-soft", d: `M${x0},${H - m.b}V${y0 + rr}Q${x0},${y0} ${x0 + rr},${y0}H${x0 + bw - rr}Q${x0 + bw},${y0} ${x0 + bw},${y0 + rr}V${H - m.b}Z` }, svg);
+      const hit = s("rect", { class: "hit", x: X(r.lag_years - 0.5), y: m.t, width: X(1) - X(0), height: H - m.b - m.t }, svg);
+      hit.addEventListener("mousemove", (ev) => showTip(`<b>Milk ${r.lag_years === 0 ? "same year" : Math.abs(r.lag_years) + " yr " + (r.lag_years < 0 ? "earlier" : "later")}</b>` + row("r", fmt(r.r, 3)) + row("Seasons", r.seasons), ev.clientX, ev.clientY));
+      hit.addEventListener("mouseleave", hideTip);
+    });
+    const top = d.find((r) => r.lag_years === -5);
+    s("text", { class: "lbl", x: X(-5) - bw / 2, y: Y(top.r) - 8 }, svg).textContent = `5 yrs earlier: ${fmt(top.r, 2)}`;
+    s("text", { class: "tick", x: (m.l + F.W - m.r) / 2, y: H - 2, "text-anchor": "middle" }, svg).textContent = "Years milk is shifted";
+  };
+
   // ---------- unmasking board ----------
   function board() {
     const d = DATA.unmasking_top, b = $("#board");
@@ -508,12 +704,18 @@
       if (b.classList.contains("revealed")) return;
       b.classList.add("revealed");
       btn.disabled = true; btn.textContent = "Unmasked";
-      [...b.children].forEach((card, i) => setTimeout(() => {
-        const r = d[i];
+      const cards = [...b.children];
+      const reveal = (i) => {
+        const r = d[i], card = cards[i];
+        card.classList.add("shown");
         card.querySelector(".nm").textContent = r.name;
         if (tierOf(r.ped_tier) !== "none") card.querySelector(".tierslot").innerHTML = chip(r.ped_tier);
-      }, i * 18));
-      setTimeout(() => {
+      };
+      const anim = window.JUICED_anim;
+      const finished = anim
+        ? anim.unmask(cards, reveal)
+        : new Promise((res) => { cards.forEach((_, i) => setTimeout(() => reveal(i), i * 18)); setTimeout(res, d.length * 18 + 200); });
+      finished.then(() => {
         count.textContent = `${linked} of 50 documented`;
         $("#reveal").classList.add("on");
         const u = DATA.unmasking, sur = u.find((r) => r.ranking === "surprise"), tal = u.find((r) => r.ranking === "talent");
@@ -523,7 +725,16 @@
           <div class="v-card"><div class="kicker">Ranked by peak power</div><div class="big">${tal.linked_in_top} <small>of 50 vs ${tal.expected_by_chance} by chance</small></div>
             <div class="fig-sub">Lift ${tal.lift}× · p = ${tal.p_value} · significant</div></div>`;
         render("null-hist");
-      }, d.length * 18 + 200);
+        if (anim) {
+          document.querySelectorAll("#verdict .big").forEach((el, i) => {
+            const n = el.firstChild; const span = document.createElement("span");
+            span.dataset.to = n.textContent.trim(); span.textContent = n.textContent.trim();
+            el.replaceChild(span, n); el.insertBefore(document.createTextNode(" "), span.nextSibling);
+            anim.count(span, i * 0.15);
+          });
+          anim.refresh();
+        }
+      });
     };
   }
 
@@ -537,12 +748,12 @@
     document.querySelectorAll(`[data-chart="${name}"]`).forEach((fig) => {
       if (!fig.offsetParent && name !== "null-hist") return;
       if (!fig.offsetParent) return;
-      try { charts[name](fig); } catch (e) { console.error(name, e); fig.innerHTML = `<p class="status err">Chart failed: ${esc(e.message)}</p>`; }
+      try { charts[name](fig); document.dispatchEvent(new CustomEvent("juiced:chart", { detail: fig })); } catch (e) { console.error(name, e); fig.innerHTML = `<p class="status err">Chart failed: ${esc(e.message)}</p>`; }
     });
   }
   const renderAll = () => Object.keys(charts).forEach(render);
   Promise.all(FILES.map((f) => fetch(`data/${f}.json`).then((r) => r.json()).then((j) => (DATA[f] = j))))
-    .then(() => { renderAll(); board(); mates(); })
+    .then(() => { renderAll(); board(); mates(); timeline(); })
     .catch((e) => { console.error(e); document.querySelectorAll("[data-chart]").forEach((f) => (f.innerHTML = `<p class="status err">Couldn't load data. Serve the site over http (python3 -m http.server).</p>`)); });
 
   let lastW = innerWidth, rt;

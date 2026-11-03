@@ -61,3 +61,24 @@ CREATE OR REPLACE TABLE raw.ped_events (
     detail     VARCHAR,
     source     VARCHAR NOT NULL
 );
+
+-- MLB drug-policy milestones. Hand-built; every row carries a verbatim quote and its source page.
+CREATE OR REPLACE TABLE raw.policy_events (
+    event_date     DATE    NOT NULL,
+    date_precision VARCHAR NOT NULL CHECK (date_precision IN ('day','month','season','year')),
+    kind           VARCHAR NOT NULL CHECK (kind IN ('policy','testing','penalty','investigation','suspension')),
+    event          VARCHAR NOT NULL,
+    quote          VARCHAR NOT NULL,
+    source         VARCHAR NOT NULL,
+    note           VARCHAR
+);
+
+-- Food available for consumption per person per year (kg). FAO Food Balances via Our World in Data.
+-- See scripts/fetch_food.py. Used only by the bonus case, which is a joke on purpose.
+CREATE OR REPLACE TABLE raw.food_supply (
+    entity        VARCHAR NOT NULL,
+    year          INTEGER NOT NULL,
+    food          VARCHAR NOT NULL,
+    kg_per_capita DOUBLE  NOT NULL,
+    PRIMARY KEY (entity, year, food)
+);

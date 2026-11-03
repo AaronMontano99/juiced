@@ -12,6 +12,8 @@ const CASES = [
   ["15_era_adjusted", "06 · The 73 question"],
   ["16_late_bloomers", "07 · Late bloomers"],
   ["17_six_degrees_of_canseco", "08 · Six degrees of Canseco"],
+  ["18_testing_timeline", "09 · The testing timeline"],
+  ["19_got_milk", "10 · Got milk? (bonus)"],
 ];
 const PRESETS = [
   ["Most dominant seasons", `-- HR+ = player HR rate ÷ league HR rate × 100
@@ -36,11 +38,18 @@ FROM core.player_season_rel r
 JOIN core.player_name n USING (player_id)
 WHERE n.name = 'Brady Anderson'
 ORDER BY r.year_id;`],
+  ["Got milk?", `-- How "juiced" was each season, next to how much milk Americans drank
+SELECT j.year_id, j.juice_share, ROUND(f.kg_per_capita, 1) AS us_milk_kg
+FROM out.juice_index j
+JOIN raw.food_supply f
+  ON f.year = j.year_id AND f.entity = 'United States' AND f.food = 'milk'
+ORDER BY j.year_id;`],
   ["What tables are there?", `SELECT table_schema, table_name, table_type
 FROM information_schema.tables
 ORDER BY 1, 2;`],
 ];
 
+const TABLES = ["people", "batting", "teams", "ped_events", "policy_events", "food_supply"];
 let db, conn, duckdb, booted = false, booting = null;
 
 function split(sql) {
@@ -76,11 +85,11 @@ async function boot() {
     URL.revokeObjectURL(workerUrl);
     conn = await db.connect();
     btn.textContent = "Loading baseball data…";
-    for (const t of ["people", "batting", "teams", "ped_events"]) {
+    for (const t of TABLES) {
       await db.registerFileURL(`${t}.parquet`, new URL(`data/${t}.parquet`, location.href).href, duckdb.DuckDBDataProtocol.HTTP, false);
     }
     await conn.query("CREATE SCHEMA IF NOT EXISTS raw; CREATE SCHEMA IF NOT EXISTS out;");
-    for (const t of ["people", "batting", "teams", "ped_events"]) {
+    for (const t of TABLES) {
       await conn.query(`CREATE OR REPLACE TABLE raw.${t} AS SELECT * FROM read_parquet('${t}.parquet')`);
     }
     btn.textContent = "Building the model…";
@@ -144,12 +153,13 @@ const MADE_BY = {
   season_projection: "13_who_broke_the_model", season_surprise: "13_who_broke_the_model",
   unmask_population: "14_the_unmasking", unmask_null: "14_the_unmasking",
   teammate_edge: "17_six_degrees_of_canseco", canseco_number: "17_six_degrees_of_canseco",
+  juice_index: "18_testing_timeline", policy_timeline: "18_testing_timeline",
 };
 async function ensureDeps(sql, rs, seen = new Set()) {
-  const own = new Set([...sql.matchAll(/CREATE\s+(?:OR\s+REPLACE\s+)?(?:TABLE|VIEW)\s+core\.([a-z_]+)/gi)].map((m) => m[1]));
-  const used = new Set([...sql.matchAll(/core\.([a-z_]+)/gi)].map((m) => m[1]).filter((t) => MADE_BY[t] && !own.has(t)));
+  const own = new Set([...sql.matchAll(/CREATE\s+(?:OR\s+REPLACE\s+)?(?:TABLE|VIEW)\s+(?:core|out)\.([a-z_]+)/gi)].map((m) => m[1]));
+  const used = new Set([...sql.matchAll(/(?:core|out)\.([a-z_]+)/gi)].map((m) => m[1]).filter((t) => MADE_BY[t] && !own.has(t)));
   if (!used.size) return;
-  const have = new Set((await conn.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'core'")).toArray().map((r) => r.table_name));
+  const have = new Set((await conn.query("SELECT table_name FROM information_schema.tables WHERE table_schema IN ('core', 'out')")).toArray().map((r) => r.table_name));
   for (const t of used) {
     const file = MADE_BY[t];
     if (have.has(t) || seen.has(file)) continue;
@@ -158,7 +168,7 @@ async function ensureDeps(sql, rs, seen = new Set()) {
     const dep = await window.JUICED_getSQL(file);
     await ensureDeps(dep, rs, seen);
     for (const st of split(dep)) await conn.query(st);
-    (await conn.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'core'")).toArray().forEach((r) => have.add(r.table_name));
+    (await conn.query("SELECT table_name FROM information_schema.tables WHERE table_schema IN ('core', 'out')")).toArray().forEach((r) => have.add(r.table_name));
   }
   status(rs, "Running…");
 }
@@ -224,7 +234,8 @@ $("#editor").addEventListener("keydown", (e) => {
 });
 
 window.JUICED_openInConsole = async (name) => {
-  $("#console").scrollIntoView({ behavior: "smooth" });
+  if (window.JUICED_lenis) window.JUICED_lenis.scrollTo("#console", { offset: -60 });
+  else $("#console").scrollIntoView({ behavior: "smooth" });
   await boot();
   if (!booted) return;
   await loadCase(name);

@@ -37,3 +37,14 @@ All 55 Mitchell position-player names were checked against the Wikipedia list on
 ## Known gaps
 
 This is who got caught or named. It is not who used. Absence from this table means nothing about a player.
+
+# The drug-policy timeline
+
+`policy_events.psv` holds 17 dated MLB drug-policy milestones, from Fay Vincent's 1991 memo to testing resuming after the 2022 lockout. It's hand-built from three Wikipedia pages (Doping in baseball, Major League Baseball drug policy, Biogenesis scandal), read Nov 2, 2026.
+
+Rules:
+
+- A row only goes in if the page states it. Each row stores a **verbatim quote** and the page URL, and `03_checks.sql` fails the build if either is missing.
+- `date_precision` says how exact the date is (`day`, `month`, `season`, `year`). Year-only rows use January 1. Season rows use a placeholder day and say so in `note`.
+- Where Wikipedia flags a missing citation or its pages disagree, `note` says so (13 vs 14 Biogenesis suspensions, for example).
+- Left out because the pages don't state them: the share of 2003 survey tests that came back positive, and the start date of amphetamine testing.

@@ -75,6 +75,8 @@ def publish_site(con):
         "batting": "SELECT * FROM raw.batting WHERE lg_id IN ('AL','NL') AND year_id >= 1901",
         "teams": "SELECT * FROM raw.teams WHERE lg_id IN ('AL','NL') AND year_id >= 1901",
         "ped_events": "SELECT * FROM raw.ped_events",
+        "policy_events": "SELECT * FROM raw.policy_events",
+        "food_supply": "SELECT * FROM raw.food_supply",
     }
     for name, q in exports.items():
         con.execute(f"COPY ({q}) TO '{data / (name + '.parquet')}' (FORMAT parquet, COMPRESSION zstd)")

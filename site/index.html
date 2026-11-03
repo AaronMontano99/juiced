@@ -21,6 +21,7 @@
     <nav>
       <a href="#case-1">Cases</a>
       <a href="#unmask">Unmask</a>
+      <a href="#got-milk">Got milk?</a>
       <a href="#methods">Method</a>
       <a href="#console">SQL console</a>
     </nav>
@@ -31,30 +32,35 @@
 </header>
 
 <main id="top">
-<section class="hero wrap">
+<div class="hero-pin" id="hero-pin">
+<section class="hero wrap" id="hero">
+  <div class="ball" id="ball" aria-hidden="true"><div class="ball-hint" id="ball-hint" hidden>Scroll to juice it ↓</div></div>
+  <div class="hero-text">
   <div class="kicker">A SQL investigation · 1901–2025</div>
   <h1>JUICED<span>.</span></h1>
   <p class="lede">I took every MLB batting line since 1901 and a sourced list of every player tied to steroids, and tried to answer one question with SQL: can you actually see the juice in the numbers?</p>
   <p class="lede">Kind of. Just not where everybody looks.</p>
+  </div>
 
   <div class="tiles">
     <a class="tile" href="#case-1">
       <div class="label">Home runs per 100 plate appearances, 2019 vs the 2000 steroid-era peak</div>
-      <div class="value">3.63 <small>vs 2.99</small></div>
+      <div class="value"><span data-from="0" data-to="3.63" data-dec="2">3.63</span> <small>vs 2.99</small></div>
       <div class="go">Case 01 →</div>
     </a>
     <a class="tile" href="#case-1">
       <div class="label">Where the data says power eras actually start. 2005, when testing began, isn't one of them</div>
-      <div class="value">1994 <small>&amp; 2016</small></div>
+      <div class="value"><span data-from="1901" data-to="1994" data-dec="0">1994</span> <small>&amp; 2016</small></div>
       <div class="go">Case 01 →</div>
     </a>
     <a class="tile" href="#unmask">
       <div class="label">Guys who "came out of nowhere" aren't on the steroid list any more often than chance</div>
-      <div class="value">p = 0.27</div>
+      <div class="value">p = <span data-from="1" data-to="0.27" data-dec="2">0.27</span></div>
       <div class="go">Case 05 →</div>
     </a>
   </div>
 </section>
+</div>
 
 <!-- CASE 1 -->
 <section class="case wrap" id="case-1">
@@ -163,6 +169,37 @@
   <div class="mates" id="mates"></div>
 </section>
 
+<!-- CASE 9 -->
+<section class="case wrap" id="case-9">
+  <div class="kicker">Case 09 · The testing timeline</div>
+  <h2>The documented players' share of home runs was already falling when testing started</h2>
+  <div class="prose">
+    <p>Here's MLB's drug policy, from the 1991 memo that banned steroids without checking for them to blood tests for HGH in 2012. Every milestone below has a direct quote and a source.</p>
+    <p>The line is what I'm calling the juice index: the share of all home runs hit by players who were later suspended, named or admitted using. It peaked at <strong>15.6% in 1998</strong> and was already sliding before testing began in 2003. Three seasons before testing, the league hit 2.87 home runs per 100 PA. Three seasons after, 2.82. Basically no change. The big jumps came after 2015, and those line up with the ball (case 02), not with policy.</p>
+    <p>One catch: a player counts for his whole career, because nobody knows which years he used. And the list only has the guys who got caught or named.</p>
+  </div>
+  <figure class="fig" data-chart="juice-timeline" data-sql="18_testing_timeline"></figure>
+  <ol class="timeline" id="timeline"></ol>
+</section>
+
+<!-- CASE 10 -->
+<section class="case wrap" id="got-milk">
+  <div class="kicker">Case 10 · Bonus · Got milk?</div>
+  <h2>America drank more milk when baseball was juiced. Sort of.</h2>
+  <div class="prose">
+    <p>The more of the league's home runs came from guys later tied to steroids, the more milk Americans drank. The correlation is <strong>r = 0.59</strong>, and the slope says every extra point of juice is worth 2.4 kg of milk per person. I ran it for seven foods, for the US and for the whole world. Pick one below.</p>
+    <p>Obviously this is fake, and the data shows how. Most of the milk "link" is one step: in 2010, US milk drops 30 kg per person overnight. Americans didn't quit milk. That's the year the UN's food agency changed how it counts, and the data joins the old and new series there. Use only the years before the switch and milk falls to <strong>0.15</strong>. Chicken jumps to 0.62. Pick your years, pick your winner.</p>
+    <p>The proper fix is to compare year-over-year changes instead of the raw levels, which strips out anything that just trends. Do that and nothing survives. Milk is 0.21, and the best food in either region is 0.27.</p>
+    <p>Then there's the lag test. Milk from five years <em>earlier</em> "predicts" the juice even better (0.65). Kids drinking milk in 1993 didn't turn into juiced sluggers in 1998. That's just what a trend looks like. Same lesson as the unmasking: a pattern in the numbers isn't evidence.</p>
+  </div>
+  <figure class="fig" data-chart="got-milk" data-sql="19_got_milk"></figure>
+  <div class="grid2" style="margin-top:16px">
+    <figure class="fig" data-chart="food-corr"></figure>
+    <figure class="fig" data-chart="milk-lag"></figure>
+  </div>
+  <p class="fig-sub" style="margin-top:4px">Food numbers are food available per person per year (FAO Food Balances, via Our World in Data). Free sales data doesn't exist for this, so supply is the stand-in.</p>
+</section>
+
 <!-- METHODS -->
 <section class="case wrap methods" id="methods">
   <div class="kicker">How this was built</div>
@@ -178,6 +215,8 @@
     <li><b>No park factor for home runs.</b> Lahman only has an overall park factor, so Coors Field moves are flagged, not adjusted.</li>
     <li><b>The projection is deliberately simple.</b> Marcel is a baseline, not a forecast system. Its calibration table is in the case 04 SQL.</li>
     <li><b>Data goes through 2025.</b> AL and NL only, 1901 on.</li>
+    <li><b>The testing timeline</b> uses only milestones Wikipedia states directly, each stored with the exact quote. Where Wikipedia's own pages disagree (13 or 14 Biogenesis suspensions) or flag a missing citation, the row says so.</li>
+    <li><b>Case 10 is a joke on purpose.</b> It shows how two unrelated trends can correlate. The food data is FAO food supply per person through 2023, not sales.</li>
   </ul>
 </section>
 
@@ -218,13 +257,20 @@
 <footer>
   <div class="wrap">
     <p><b>JUICED</b> by Aaron Montano.</p>
-    <p>Data: <a href="https://sabr.org/lahman-database/">SABR Lahman Baseball Database</a> (2025, CC BY-SA 3.0). PED list sourced from MLB suspension records, the Mitchell Report (2007) and public reporting, via Wikipedia's lists with each row's source kept in the table. Aging-curve comparison: FanGraphs (Jeff Zimmerman and others).</p>
+    <p>Data: <a href="https://sabr.org/lahman-database/">SABR Lahman Baseball Database</a> (2025, CC BY-SA 3.0). PED list sourced from MLB suspension records, the Mitchell Report (2007) and public reporting, via Wikipedia's lists with each row's source kept in the table. Aging-curve comparison: FanGraphs (Jeff Zimmerman and others). Drug-policy timeline: Wikipedia's "Doping in baseball", "Major League Baseball drug policy" and "Biogenesis scandal" pages. Food supply: FAO Food Balances via <a href="https://ourworldindata.org/diet-compositions">Our World in Data</a> (CC BY 4.0).</p>
     <p>Static site, hand-rolled SVG charts, no tracking.</p>
   </div>
 </footer>
 
 <div class="tip" id="tip" role="status"></div>
 <script src="app.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrambleTextPlugin.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script defer src="anim.js"></script>
+<script type="module" src="ball.js"></script>
 <script type="module" src="console.js"></script>
 </body>
 </html>

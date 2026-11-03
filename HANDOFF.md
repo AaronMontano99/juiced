@@ -63,6 +63,21 @@ Rebuild everything with `cd ~/juiced && .venv/bin/python scripts/build.py`. It t
 - Mitchell names (all 55) verified against Wikipedia's list Nov 2.
 - `vercel.json` serves `site/` as a static output with no build step.
 
+## Motion layer (built Nov 2, late; not committed yet)
+
+- `site/ball.js`: Three.js 0.186.1 hero baseball. The leather, seam and 108 stitches are drawn in code onto a canvas texture. It has a glow shell and spark particles, and swells and glows with scroll. On desktop the hero pins while it "juices" (only when the hero fits on screen; never on phones).
+- `site/anim.js`: Lenis 1.3.26 smooth scroll and GSAP 3.15.0 (ScrollTrigger, SplitText, ScrambleText). Headlines rise line by line, hero numbers count up, charts draw themselves when scrolled into view (app.js fires a `juiced:chart` event per render), and the unmask cards flip and unscramble.
+- Fallbacks: reduced motion, a CDN failure or no WebGL each give the old still site. All three were checked (reduced motion was emulated).
+- Tested in headless Chrome at 1280 (light and dark) and 390: no errors, no sideways scroll, and the console still works.
+- Ideas for later: the Canseco teammate network spreading hop by hop on scroll.
+
+## Cases 09 and 10 (built Nov 2, late; not committed yet)
+
+- Case 09, the testing timeline: `data/seed/policy_events.psv` holds 17 Wikipedia-verified milestones, each with a verbatim quote. `sql/analysis/18_testing_timeline.sql` builds `out.juice_index` (share of home runs hit by confirmed or named players, 1985–2025, peaking at 15.6% in 1998) and `out.policy_timeline` (HR rate and juice index in the 3 seasons before vs after each event).
+- Case 10, "Got milk?" (a deliberate joke): FAO food supply via Our World in Data, from `scripts/fetch_food.py` into `data/food/food_supply.csv` (World + US, 7 foods, 1961–2023). `19_got_milk.sql` correlates each food with the juice index. US milk raw r = 0.59, but FAO changed its method in 2010 (the old and new series are joined; confirmed in OWID's metadata), and old-method years only give 0.15. On year-over-year changes, nothing beats 0.27. The milk lag peaks at 5 years earlier (0.65).
+- The console loads the new tables. Case 10 auto-builds Case 09's juice index first.
+- Build time is back to about 5s. The 4-minute run was a one-off.
+
 ## Next steps
 
 1. Aaron reviews the site locally and the copy.

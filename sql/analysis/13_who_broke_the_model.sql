@@ -78,7 +78,7 @@ ORDER BY year_id;
 -- The blind board: top 100 seasons by surprise. Names are joined here so the site can reveal
 -- them on click, but the ranking is computed from stats alone.
 CREATE OR REPLACE TABLE out.model_outliers AS
-SELECT ROW_NUMBER() OVER (ORDER BY z DESC)    AS rank,
+SELECT ROW_NUMBER() OVER (ORDER BY s.z DESC, s.player_id, s.year_id) AS rank,
        n.name, s.player_id, s.year_id, s.age, s.teams,
        s.hr, ROUND(s.expected_hr, 1)          AS expected_hr,
        ROUND(s.z, 2)                          AS z,
@@ -88,5 +88,5 @@ SELECT ROW_NUMBER() OVER (ORDER BY z DESC)    AS rank,
 FROM core.season_surprise s
 JOIN core.player_name n USING (player_id)
 LEFT JOIN core.ped_player pp USING (player_id)
-ORDER BY z DESC
+ORDER BY s.z DESC, s.player_id, s.year_id   -- tie-breakers keep the order stable between builds
 LIMIT 100;
