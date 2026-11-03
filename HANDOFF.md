@@ -1,7 +1,7 @@
 # JUICED: handoff (updated Nov 2, 2026, evening)
 
 A SQL investigation into baseball's steroid era, built as a GitHub and portfolio project.
-The SQL pipeline, the website, both READMEs and the first git commit are done. Not yet pushed to GitHub or deployed.
+The SQL pipeline, the website, both READMEs and the first git commit are done. Pushed to https://github.com/AaronMontano99/juiced (private for now). Not deployed.
 
 ## Where things are
 
@@ -66,7 +66,7 @@ Rebuild everything with `cd ~/juiced && .venv/bin/python scripts/build.py`. It t
 ## Next steps
 
 1. Aaron reviews the site locally and the copy.
-2. **Ask Aaron before** creating the public GitHub repo (AaronMontano99/juiced?) and deploying to Vercel.
+2. Repo is private. **Ask Aaron before** making it public and deploying to Vercel.
 3. Optional: an OG image, and putting the GitHub link in the footer once the repo exists.
 
 ## Gotchas
