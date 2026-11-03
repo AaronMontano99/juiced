@@ -1,7 +1,7 @@
 # JUICED: handoff (updated Nov 2, 2026, evening)
 
 A SQL investigation into baseball's steroid era, built as a GitHub and portfolio project.
-The SQL pipeline, the website, both READMEs and the first git commit are done. Pushed to https://github.com/AaronMontano99/juiced (private for now). Not deployed.
+The SQL pipeline, the website, both READMEs and the first git commit are done. Public at https://github.com/AaronMontano99/juiced. Not deployed.
 
 ## Where things are
 
@@ -82,12 +82,12 @@ Rebuild everything with `cd ~/juiced && .venv/bin/python scripts/build.py`. It t
 
 - Demo: https://juiced-sooty.vercel.app (Vercel project `juiced` under aaron-montano, team aaron-1ad8). Deployed from `site/` with `cd site && vercel deploy --prod --yes`. `site/.vercel` and `site/.env.local` are git-ignored, and the live site 404s on both (checked).
 - Wanted `juiced-demo.vercel.app` like the other demos, but auto mode blocked `vercel domains add`. Aaron can run `! cd ~/juiced/site && vercel domains add juiced-demo.vercel.app juiced`, then update the link on his site.
-- On his website (aaronmontano.vercel.app) as card 5, commit 9c05051 in personal-site. `href` is null while the repo is private.
+- On his website (aaronmontano.vercel.app) as card 5, commit 9c05051 in personal-site. The repo went public Nov 2, and the card links it (commit b568e4b).
 
 ## Next steps
 
 1. Aaron reviews the site locally and the copy.
-2. Repo is private. **Ask Aaron before** making it public and deploying to Vercel.
+2. Done: public repo, live demo, card on his site.
 3. Optional: an OG image, and putting the GitHub link in the footer once the repo exists.
 
 ## Gotchas
