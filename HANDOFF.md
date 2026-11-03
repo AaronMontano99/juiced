@@ -78,6 +78,12 @@ Rebuild everything with `cd ~/juiced && .venv/bin/python scripts/build.py`. It t
 - The console loads the new tables. Case 10 auto-builds Case 09's juice index first.
 - Build time is back to about 5s. The 4-minute run was a one-off.
 
+## Live (Nov 2, 2026)
+
+- Demo: https://juiced-sooty.vercel.app (Vercel project `juiced` under aaron-montano, team aaron-1ad8). Deployed from `site/` with `cd site && vercel deploy --prod --yes`. `site/.vercel` and `site/.env.local` are git-ignored, and the live site 404s on both (checked).
+- Wanted `juiced-demo.vercel.app` like the other demos, but auto mode blocked `vercel domains add`. Aaron can run `! cd ~/juiced/site && vercel domains add juiced-demo.vercel.app juiced`, then update the link on his site.
+- On his website (aaronmontano.vercel.app) as card 5, commit 9c05051 in personal-site. `href` is null while the repo is private.
+
 ## Next steps
 
 1. Aaron reviews the site locally and the copy.
