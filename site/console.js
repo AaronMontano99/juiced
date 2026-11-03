@@ -138,6 +138,31 @@ function show(result, ms, note) {
   out.innerHTML = fields.length ? `<div class="tbl-wrap" style="max-height:480px"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>` : "";
 }
 
+// Some cases build on tables another case creates (case 05 uses case 04's projections).
+// If the SQL reads one of those and it isn't there yet, run the case that makes it first.
+const MADE_BY = {
+  season_projection: "13_who_broke_the_model", season_surprise: "13_who_broke_the_model",
+  unmask_population: "14_the_unmasking", unmask_null: "14_the_unmasking",
+  teammate_edge: "17_six_degrees_of_canseco", canseco_number: "17_six_degrees_of_canseco",
+};
+async function ensureDeps(sql, rs, seen = new Set()) {
+  const own = new Set([...sql.matchAll(/CREATE\s+(?:OR\s+REPLACE\s+)?(?:TABLE|VIEW)\s+core\.([a-z_]+)/gi)].map((m) => m[1]));
+  const used = new Set([...sql.matchAll(/core\.([a-z_]+)/gi)].map((m) => m[1]).filter((t) => MADE_BY[t] && !own.has(t)));
+  if (!used.size) return;
+  const have = new Set((await conn.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'core'")).toArray().map((r) => r.table_name));
+  for (const t of used) {
+    const file = MADE_BY[t];
+    if (have.has(t) || seen.has(file)) continue;
+    seen.add(file);
+    status(rs, `First building ${t} from ${file}.sql…`);
+    const dep = await window.JUICED_getSQL(file);
+    await ensureDeps(dep, rs, seen);
+    for (const st of split(dep)) await conn.query(st);
+    (await conn.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'core'")).toArray().forEach((r) => have.add(r.table_name));
+  }
+  status(rs, "Running…");
+}
+
 async function run() {
   if (!booted) await boot();
   const rs = $("#run-status"), btn = $("#run-btn");
@@ -148,6 +173,7 @@ async function run() {
   status(rs, stmts.length > 1 ? `Running ${stmts.length} statements…` : "Running…");
   const t0 = performance.now();
   try {
+    await ensureDeps(sql, rs);
     let last = null;
     for (const st of stmts) last = await conn.query(st);
     const ms = Math.round(performance.now() - t0);
