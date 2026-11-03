@@ -1,0 +1,1 @@
+[{"ranking":"surprise","population":478,"linked_in_population":42,"top_n":50,"linked_in_top":6,"expected_by_chance":4.42,"lift":1.36,"p_value":0.27437,"iterations":10000},{"ranking":"talent","population":478,"linked_in_population":42,"top_n":50,"linked_in_top":14,"expected_by_chance":4.42,"lift":3.17,"p_value":0.0002,"iterations":10000}]

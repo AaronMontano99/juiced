@@ -1,0 +1,107 @@
+player_id,name,event_type,event_date,tier,substance,detail,source
+palmera01,Rafael Palmeiro,suspension,2005-08-01,confirmed,Stanozolol,10-game suspension under MLB drug policy,MLB announcement; Wikipedia list of MLB PED suspensions
+morsemi01,Mike Morse,suspension,2005-09-07,confirmed,,Suspension under MLB drug policy,Wikipedia list of MLB PED suspensions
+lawtoma02,Matt Lawton,suspension,2005-11-02,confirmed,,10-day suspension under MLB drug policy,Wikipedia list of MLB PED suspensions
+perezne01,Neifi Perez,suspension,2007-07-06,stimulant,,25 games then 80 games (stimulant violations),Wikipedia list of MLB PED suspensions
+camermi01,Mike Cameron,suspension,2007-10-31,stimulant,Amphetamine,25-game suspension,Wikipedia list of MLB PED suspensions
+guilljo01,Jose Guillen,suspension,2007-12-06,confirmed,,15-game suspension tied to purchase records,Wikipedia list of MLB PED suspensions
+gibboja01,Jay Gibbons,suspension,2007-12-06,confirmed,,Suspension tied to purchase records,Wikipedia list of MLB PED suspensions
+alfonel01,Eliezer Alfonzo,suspension,2008-04-30,confirmed,,50-game suspension; second suspension 2011,Wikipedia list of MLB PED suspensions
+ramirma02,Manny Ramirez,suspension,2009-05-07,confirmed,Human chorionic gonadotropin,50 games; second violation 2011-04-08 (100 games),MLB announcement; Wikipedia list of MLB PED suspensions
+pauliro01,Ronny Paulino,suspension,2010-08-20,confirmed,,50-game suspension,Wikipedia list of MLB PED suspensions
+jacobmi02,Mike Jacobs,suspension,2011-08-18,confirmed,HGH,50-game suspension,Wikipedia list of MLB PED suspensions
+galvifr01,Freddy Galvis,suspension,2012-06-19,confirmed,Clostebol,50-game suspension,Wikipedia list of MLB PED suspensions
+byrdma01,Marlon Byrd,suspension,2012-06-25,confirmed,,50 games 2012; 162 games 2016 (Ipamorelin),Wikipedia list of MLB PED suspensions
+cabreme01,Melky Cabrera,suspension,2012-08-15,confirmed,Testosterone,50-game suspension,Wikipedia list of MLB PED suspensions
+grandya01,Yasmani Grandal,suspension,2012-11-07,confirmed,Testosterone,50-game suspension,Wikipedia list of MLB PED suspensions
+ruizca01,Carlos Ruiz,suspension,2012-11-27,stimulant,Amphetamine,25-game suspension,Wikipedia list of MLB PED suspensions
+braunry02,Ryan Braun,suspension,2013-07-22,confirmed,Testosterone,"Rest of 2013 season (65 games), Biogenesis",Wikipedia list of MLB PED suspensions
+cruzne02,Nelson Cruz,suspension,2013-08-05,confirmed,,"50 games, Biogenesis",Wikipedia list of MLB PED suspensions
+peraljh01,Jhonny Peralta,suspension,2013-08-05,confirmed,,"50 games, Biogenesis",Wikipedia list of MLB PED suspensions
+cabreev01,Everth Cabrera,suspension,2013-08-05,confirmed,,"50 games, Biogenesis",Wikipedia list of MLB PED suspensions
+cervefr01,Francisco Cervelli,suspension,2013-08-05,confirmed,,"50 games, Biogenesis",Wikipedia list of MLB PED suspensions
+rodrial01,Alex Rodriguez,suspension,2013-08-05,confirmed,,"2014 season (162 games), Biogenesis",Wikipedia list of MLB PED suspensions
+monteje01,Jesus Montero,suspension,2013-08-05,confirmed,,"50 games, Biogenesis",Wikipedia list of MLB PED suspensions
+valdejo02,Jordany Valdespin,suspension,2013-08-05,confirmed,,"50 games, Biogenesis",Wikipedia list of MLB PED suspensions
+tejadmi01,Miguel Tejada,suspension,2013-08-17,stimulant,Amphetamine,105-game suspension,Wikipedia list of MLB PED suspensions
+maybica01,Cameron Maybin,suspension,2014-07-23,stimulant,Amphetamine,25-game suspension,Wikipedia list of MLB PED suspensions
+davisch02,Chris Davis,suspension,2014-09-12,stimulant,Adderall,25-game suspension,Wikipedia list of MLB PED suspensions
+betemwi01,Wilson Betemit,suspension,2015-02-02,confirmed,,50-game suspension,Wikipedia list of MLB PED suspensions
+almonab01,Abraham Almonte,suspension,2016-02-26,confirmed,,80-game suspension,Wikipedia list of MLB PED suspensions
+colabch01,Chris Colabello,suspension,2016-04-22,confirmed,,80-game suspension,Wikipedia list of MLB PED suspensions
+gordode01,Dee Strange-Gordon,suspension,2016-04-29,confirmed,"Clostebol, Testosterone",80-game suspension,Wikipedia list of MLB PED suspensions
+mondera02,Adalberto Mondesi,suspension,2016-05-10,confirmed,Clenbuterol,50-game suspension,Wikipedia list of MLB PED suspensions
+martest01,Starling Marte,suspension,2017-04-18,confirmed,Nandrolone,80-game suspension,Wikipedia list of MLB PED suspensions
+polanjo01,Jorge Polanco,suspension,2018-03-18,confirmed,Stanozolol,80-game suspension,Wikipedia list of MLB PED suspensions
+canoro01,Robinson Cano,suspension,2018-05-15,confirmed,Furosemide,80 games 2018; 162 games 2020 (Stanozolol),Wikipedia list of MLB PED suspensions
+castiwe01,Welington Castillo,suspension,2018-05-24,confirmed,Erythropoietin,80-game suspension,Wikipedia list of MLB PED suspensions
+beckhti01,Tim Beckham,suspension,2019-08-06,confirmed,Stanozolol,80-game suspension,Wikipedia list of MLB PED suspensions
+reyespa01,Pablo Reyes,suspension,2020-02-19,confirmed,,80-game suspension,Wikipedia list of MLB PED suspensions
+barretr01,Tres Barrera,suspension,2020-07-25,confirmed,DHCMT,80-game suspension,Wikipedia list of MLB PED suspensions
+laurera01,Ramon Laureano,suspension,2021-08-07,confirmed,Nandrolone,80-game suspension,Wikipedia list of MLB PED suspensions
+severpe01,Pedro Severino,suspension,2022-04-05,confirmed,Clomiphene,80-game suspension,Wikipedia list of MLB PED suspensions
+tatisfe02,Fernando Tatis,suspension,2022-08-12,confirmed,Clostebol,80-game suspension,Wikipedia list of MLB PED suspensions
+marteno01,Noelvi Marte,suspension,2024-03-08,confirmed,Boldenone,80-game suspension,Wikipedia list of MLB PED suspensions
+profaju01,Jurickson Profar,suspension,2025-03-31,confirmed,Human chorionic gonadotropin,80 games 2025; 162 games 2026 (Testosterone),Wikipedia list of MLB PED suspensions
+mcgwima01,Mark McGwire,admission,2010-01-11,confirmed,Steroids,Publicly admitted steroid use across his career incl. 1998,"Public statement, Jan 2010"
+cansejo01,Jose Canseco,admission,2005-02-14,confirmed,Steroids,"Admitted use in memoir ""Juiced""",Juiced (2005); also named in Mitchell Report
+caminke01,Ken Caminiti,admission,2002-05-28,confirmed,Steroids,Admitted use incl. 1996 MVP season,"Sports Illustrated, 2002"
+giambja01,Jason Giambi,admission,2004-12-02,confirmed,Steroids,Grand jury testimony (BALCO) reported; later public apology,San Francisco Chronicle; Mitchell Report (BALCO section)
+bondsba01,Barry Bonds,investigation,2007-12-13,named,,BALCO investigation; named in Mitchell Report; denied knowing use,Mitchell Report (BALCO section)
+sheffga01,Gary Sheffield,investigation,2007-12-13,named,,BALCO; named in Mitchell Report; said use was unknowing,Mitchell Report (BALCO section)
+santibe01,Benito Santiago,investigation,2007-12-13,named,,Named in Mitchell Report (BALCO section),Mitchell Report
+benarma01,Marvin Benard,investigation,2007-12-13,named,,Named in Mitchell Report (BALCO section),Mitchell Report
+estalbo02,Bobby Estalella,investigation,2007-12-13,named,,Named in Mitchell Report (BALCO section),Mitchell Report
+giambje01,Jeremy Giambi,admission,2007-12-13,confirmed,,Named in Mitchell Report; publicly acknowledged use,Mitchell Report; Kansas City Star
+riosar01,Armando Rios,investigation,2007-12-13,named,,Named in Mitchell Report (BALCO section),Mitchell Report
+velarra01,Randy Velarde,investigation,2007-12-13,named,,Named in Mitchell Report (BALCO section),Mitchell Report
+sosasa01,Sammy Sosa,reported,2009-06-16,named,,Reported on the 2003 anonymous survey-test list; denied,"New York Times, June 2009"
+ortizda01,David Ortiz,reported,2009-07-30,named,,Reported on the 2003 anonymous survey-test list; MLB later said results were unreliable,"New York Times, July 2009"
+rodrial01,Alex Rodriguez,admission,2009-02-09,confirmed,,Admitted use 2001-2003 after 2003 survey-test report,"Sports Illustrated report; ESPN interview, Feb 2009"
+braunry02,Ryan Braun,admission,2013-08-22,confirmed,,Public statement acknowledging use after suspension,"Public statement, Aug 2013"
+allench01,Chad Allen,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+bellmi02,Mike Bell,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+bennega01,Gary Bennett,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+bigbila01,Larry Bigbie,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+carrema01,Mark Carreon,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+clarkho02,Howie Clark,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+custja01,Jack Cust,mitchell,2007-12-13,named,,Named in Mitchell Report; denied,Mitchell Report
+donnech01,Chris Donnels,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+dykstle01,Lenny Dykstra,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+francma01,Matt Franco,mitchell,2007-12-13,named,,Named in Mitchell Report; denied,Mitchell Report
+hairsje02,Jerry Hairston,mitchell,2007-12-13,named,,Named in Mitchell Report; denied,Mitchell Report
+hiattph01,Phil Hiatt,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+hillgl01,Glenallen Hill,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+hundlto01,Todd Hundley,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+justida01,David Justice,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+knoblch01,Chuck Knoblauch,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+lakerti01,Tim Laker,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+lansimi01,Mike Lansing,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+loducpa01,Paul Lo Duca,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+loganno01,Nook Logan,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+mckayco01,Cody McKay,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+morriha02,Hal Morris,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+piattad01,Adam Piatt,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+prattto02,Todd Pratt,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+riggsad01,Adam Riggs,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+roberbr01,Brian Roberts,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+santafp01,F. P. Santangelo,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+seguida01,David Segui,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+tejadmi01,Miguel Tejada,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+vaughmo01,Mo Vaughn,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+vinafe01,Fernando Vina,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+whitero02,Rondell White,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+youngke01,Kevin Young,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+zaungr01,Gregg Zaun,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+bellda01,David Bell,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+cansejo01,Jose Canseco,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+gibboja01,Jay Gibbons,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+glaustr01,Troy Glaus,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+guilljo01,Jose Guillen,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+matthga02,Gary Matthews,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+willima04,Matt Williams,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+alexama02,Manny Alexander,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+cabreal02,Alex Cabrera,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+gonzaju03,Juan Gonzalez,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+ankieri01,Rick Ankiel,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report
+joynewa01,Wally Joyner,mitchell,2007-12-13,named,,Named in Mitchell Report,Mitchell Report

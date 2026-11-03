@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JUICED · Baseball's Steroid Era in SQL</title>
+<meta name="description" content="A SQL investigation of baseball's steroid era. 125 years of Lahman data, a sourced list of every player tied to PEDs, eight questions, and a live DuckDB console in your browser.">
+<meta property="og:title" content="JUICED · Baseball's Steroid Era in SQL">
+<meta property="og:description" content="Can you see the juice in the numbers? Kind of. Not where everybody looks.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23eb6834'/><text x='16' y='23' font-family='Georgia,serif' font-weight='700' font-size='20' text-anchor='middle' fill='white'>J</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,650;8..60,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#top">JUICED</a>
+    <nav>
+      <a href="#case-1">Cases</a>
+      <a href="#unmask">Unmask</a>
+      <a href="#methods">Method</a>
+      <a href="#console">SQL console</a>
+    </nav>
+    <button class="icon-btn" id="theme" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero wrap">
+  <div class="kicker">A SQL investigation · 1901–2025</div>
+  <h1>JUICED<span>.</span></h1>
+  <p class="lede">I took every MLB batting line since 1901 and a sourced list of every player tied to steroids, and tried to answer one question with SQL: can you actually see the juice in the numbers?</p>
+  <p class="lede">Kind of. Just not where everybody looks.</p>
+
+  <div class="tiles">
+    <a class="tile" href="#case-1">
+      <div class="label">Home runs per 100 plate appearances, 2019 vs the 2000 steroid-era peak</div>
+      <div class="value">3.63 <small>vs 2.99</small></div>
+      <div class="go">Case 01 →</div>
+    </a>
+    <a class="tile" href="#case-1">
+      <div class="label">Where the data says power eras actually start. 2005, when testing began, isn't one of them</div>
+      <div class="value">1994 <small>&amp; 2016</small></div>
+      <div class="go">Case 01 →</div>
+    </a>
+    <a class="tile" href="#unmask">
+      <div class="label">Guys who "came out of nowhere" aren't on the steroid list any more often than chance</div>
+      <div class="value">p = 0.27</div>
+      <div class="go">Case 05 →</div>
+    </a>
+  </div>
+</section>
+
+<!-- CASE 1 -->
+<section class="case wrap" id="case-1">
+  <div class="kicker">Case 01 · The home run explosion</div>
+  <h2>The home run peak wasn't the steroid era</h2>
+  <div class="prose">
+    <p>If steroids drove the power surge, home runs should fall off a cliff once testing started in 2005. So I didn't pick the eras myself. I let the data pick them. A brute-force search tried all <strong>18,424</strong> ways to cut 1960–2025 into four eras and kept the one with the least error.</p>
+    <p>It picked <strong>1994</strong> and <strong>2016</strong>. Not 2005. And <strong>2019</strong> had more home runs per plate appearance than any year of the steroid era: 3.63 per 100, against a 2000 peak of 2.99.</p>
+  </div>
+  <figure class="fig" data-chart="trend" data-sql="10_home_run_explosion"></figure>
+</section>
+
+<!-- CASE 2 -->
+<section class="case wrap" id="case-2">
+  <div class="kicker">Case 02 · Ball or juice</div>
+  <h2>A livelier ball lifts everybody. Something else stretched the top.</h2>
+  <div class="prose">
+    <p>A juiced ball and juiced players should leave different fingerprints. A ball helps every hitter, so the whole distribution moves up. Drugs help some guys a lot, so the top pulls away from the middle.</p>
+    <p>So I compared the median regular to the top 1% in each stretch. In <strong>1996–2001</strong> the top 1% hit at the highest rate ever, 7.53 per 100 PA. In <strong>2016–19</strong> the median jumped to 3.43, but the gap between the top and the middle was the smallest it's ever been. That's what a ball looks like. It doesn't prove anything about the 90s, but it fits.</p>
+  </div>
+  <figure class="fig" data-chart="dumbbell-eras" data-sql="11_ball_or_juice"></figure>
+  <figure class="fig" data-chart="dist-trend"></figure>
+</section>
+
+<!-- CASE 3 -->
+<section class="case wrap" id="case-3">
+  <div class="kicker">Case 03 · Aging curves</div>
+  <h2>Hitters didn't peak higher. They stopped getting old.</h2>
+  <div class="prose">
+    <p>From age 30 to 35, hitters in the untested years (1993–2004) lost <strong>22</strong> points of HR+. Before that, they lost 33.5. Under testing, they lose 29.8. The peak looks about the same in every era. The decline is what changed.</p>
+    <p>FanGraphs found the same direction. This uses the delta method (compare each player to himself, year over year), which carries survivor bias: guys who fell apart retired and dropped out of the sample.</p>
+  </div>
+  <figure class="fig" data-chart="aging" data-sql="12_aging_curves"></figure>
+</section>
+
+<!-- CASE 4 -->
+<section class="case wrap" id="case-4">
+  <div class="kicker">Case 04 · Who broke the model</div>
+  <h2>The biggest surprises in history mostly aren't on the list</h2>
+  <div class="prose">
+    <p>I built a simple projection, Marcel-style: the last three years weighted 5/4/3, pulled toward league average, adjusted for age. Then I scored every season since 1950 on how far it beat its projection.</p>
+    <p>The biggest surprise ever is <strong>Kirby Puckett in 1986</strong>: projected for 5 home runs, hit 31. Then Bautista 2010, Davey Johnson 1973 and Brady Anderson 1996. Of the top 12, one guy has any documented link.</p>
+  </div>
+  <figure class="fig" data-chart="outliers" data-sql="13_who_broke_the_model"></figure>
+</section>
+
+<!-- CASE 5 -->
+<section class="case wrap" id="unmask">
+  <div class="kicker">Case 05 · The unmasking</div>
+  <h2>Unmask the outliers</h2>
+  <div class="prose">
+    <p>These are the 50 biggest surprise hitters of 1993–2004, ranked by how far one season beat the projection. Names hidden. If cheaters show up as sudden jumps, this list should be full of them.</p>
+    <p>Out of 478 regulars in this window, 42 have a documented link. That's 8.8%. Guess how many are in this 50. Then unmask.</p>
+  </div>
+  <div class="board-controls">
+    <button class="btn" id="unmask-btn">Unmask</button>
+    <span class="status" id="unmask-count"></span>
+  </div>
+  <div class="board" id="board"></div>
+
+  <div class="reveal" id="reveal">
+    <div class="verdict" id="verdict"></div>
+    <div class="prose" style="margin-top:22px">
+      <p>To check whether 6 is a lot, I shuffled the documented labels across all 478 hitters 10,000 times, in SQL, and counted how often a random top 50 had at least that many. <strong>27% of the time.</strong> Not significant.</p>
+      <p>Now rank the same 478 hitters by peak power instead of surprise. <strong>14</strong> of the top 50 are documented. A shuffle beats that 2 times in 10,000. The list tracks great sluggers, not sudden jumps. A statistical outlier isn't evidence of anything.</p>
+    </div>
+    <figure class="fig" data-chart="null-hist" data-sql="14_the_unmasking"></figure>
+  </div>
+</section>
+
+<!-- CASE 6 -->
+<section class="case wrap" id="case-6">
+  <div class="kicker">Case 06 · The 73 question</div>
+  <h2>Measured against his league, Ruth's 1920 is four times Bonds's 2001</h2>
+  <div class="prose">
+    <p>Raw home runs make Bonds's 73 the best power season ever. Measure it against the league instead and it's a different list. <strong>HR+</strong> is a player's home run rate divided by the league's: 100 is average, 300 is triple.</p>
+    <p>Ruth hit 54 in 1920 when the league barely hit any. That's an HR+ of <strong>1,318</strong>. Bonds 2001 is 377. Maris 1961 is 351. Aaron Judge's 62 in 2022 (313) beats every one of Sosa's 60-homer seasons. Here's every season with 54 or more.</p>
+  </div>
+  <figure class="fig" data-chart="scatter" data-sql="15_era_adjusted"></figure>
+</section>
+
+<!-- CASE 7 -->
+<section class="case wrap" id="case-7">
+  <div class="kicker">Case 07 · Late bloomers</div>
+  <h2>Getting stronger after 33 isn't a smoking gun</h2>
+  <div class="prose">
+    <p>Who hit for more power from 33 to 37 than from 26 to 30? <strong>Ken Caminiti</strong>, who admitted using, is number one. But Hank Aaron and Willie Mays are in the top 10 too, and nobody's accusing them.</p>
+    <p>The share of hitters who gained power late does run high for guys who turned 33 in the early 90s (47%). The group that turned 33 in the late 60s was higher (53%).</p>
+  </div>
+  <div class="grid2" style="margin-top:26px">
+    <figure class="fig" data-chart="bloomers" data-sql="16_late_bloomers"></figure>
+    <figure class="fig" data-chart="bloom-era"></figure>
+  </div>
+</section>
+
+<!-- CASE 8 -->
+<section class="case wrap" id="case-8">
+  <div class="kicker">Case 08 · Six degrees of Canseco</div>
+  <h2>Everybody was two handshakes from Jose Canseco</h2>
+  <div class="prose">
+    <p>Canseco said he taught half the league. I built the teammate graph (same team, same season) and ran a breadth-first search out from him with a recursive CTE.</p>
+    <p><strong>99.7%</strong> of 1990s regulars are within two hops. Documented players were his direct teammates 20.8% of the time, against 15.1% for everybody else. On 48 players that's noise. Being near Canseco doesn't tell you much when everybody was near Canseco.</p>
+  </div>
+  <figure class="fig" data-chart="canseco" data-sql="17_six_degrees_of_canseco"></figure>
+  <div class="fig-title" style="margin-top:22px">Documented players who shared a clubhouse with him</div>
+  <div class="mates" id="mates"></div>
+</section>
+
+<!-- METHODS -->
+<section class="case wrap methods" id="methods">
+  <div class="kicker">How this was built</div>
+  <h2>Method, and what it can't tell you</h2>
+  <div class="prose">
+    <p>Everything is plain SQL on <a href="https://sabr.org/lahman-database/">SABR's Lahman database</a> (2025 release), run in DuckDB. The pipeline goes raw tables → a modeled layer (one row per player-season) → data-quality checks that fail the build → one SQL file per case. The same files run in the console below.</p>
+  </div>
+  <ul>
+    <li><b>The PED list is hand-built and sourced, never inferred from stats.</b> <span class="chip confirmed">confirmed</span> means an official MLB suspension or the player's own admission. <span class="chip named">named</span> means named in the Mitchell Report, BALCO or the 2003 survey leaks, with no suspension or admission. Amphetamine-only suspensions are kept separate and left out of the power analysis.</li>
+    <li><b>HR+ is the yardstick everywhere.</b> Comparing a player to his own league that year cancels out the ball, the parks and expansion, all the stuff that moved everybody at once.</li>
+    <li><b>Investigation bias.</b> The list is who got caught or named, not who used. Mitchell leaned hard on a couple of sources with ties to the Yankees and Mets clubhouses. Absence from the list means nothing.</li>
+    <li><b>Survivor bias</b> in the aging curves. Players who declined fast stopped getting at-bats.</li>
+    <li><b>No park factor for home runs.</b> Lahman only has an overall park factor, so Coors Field moves are flagged, not adjusted.</li>
+    <li><b>The projection is deliberately simple.</b> Marcel is a baseline, not a forecast system. Its calibration table is in the case 04 SQL.</li>
+    <li><b>Data goes through 2025.</b> AL and NL only, 1901 on.</li>
+  </ul>
+</section>
+
+<!-- CONSOLE -->
+<section class="case wrap" id="console">
+  <div class="kicker">Try it</div>
+  <h2>Run the SQL yourself</h2>
+  <div class="prose">
+    <p>This is a real database running in your browser (DuckDB-WASM). It loads the raw tables, builds the same model, and runs whatever you type. Load any case file, change it, break it.</p>
+  </div>
+  <div class="console" id="console-box">
+    <div class="boot-card" id="boot-card">
+      <p>Booting downloads about 35 MB (the database engine plus 1.8 MB of baseball data). Nothing leaves your machine.</p>
+      <button class="btn" id="boot-btn">Boot the database</button>
+    </div>
+    <div id="console-ui" hidden>
+      <div class="console-top">
+        <div class="presets" id="presets"></div>
+      </div>
+      <div class="console-top">
+        <select id="case-select" aria-label="Load a case file">
+          <option value="">Load a case file…</option>
+        </select>
+        <span class="status" id="db-status"></span>
+      </div>
+      <textarea class="editor" id="editor" spellcheck="false" aria-label="SQL editor"></textarea>
+      <div class="console-run">
+        <button class="btn" id="run-btn">Run</button>
+        <span class="kbd">⌘/Ctrl + Enter</span>
+        <span class="status" id="run-status"></span>
+      </div>
+      <div id="results"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>JUICED</b> by Aaron Montano.</p>
+    <p>Data: <a href="https://sabr.org/lahman-database/">SABR Lahman Baseball Database</a> (2025, CC BY-SA 3.0). PED list sourced from MLB suspension records, the Mitchell Report (2007) and public reporting, via Wikipedia's lists with each row's source kept in the table. Aging-curve comparison: FanGraphs (Jeff Zimmerman and others).</p>
+    <p>Static site, hand-rolled SVG charts, no tracking.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" role="status"></div>
+<script src="app.js"></script>
+<script type="module" src="console.js"></script>
+</body>
+</html>

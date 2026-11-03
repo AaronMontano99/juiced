@@ -1,0 +1,12 @@
+.venv/
+juiced.duckdb
+juiced.duckdb.wal
+__pycache__/
+.DS_Store
+.vercel/
+# only the Lahman tables the pipeline reads
+data/lahman/*
+!data/lahman/People.csv
+!data/lahman/Batting.csv
+!data/lahman/Teams.csv
+!data/lahman/readme2025.txt
